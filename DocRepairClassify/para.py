@@ -8,6 +8,6 @@ input_shape3=(40,19,1)
 patience=20
 batch_size=16
 
-epochs=20
+epochs=100
 validation_steps=400
 steps_per_epoch=1600

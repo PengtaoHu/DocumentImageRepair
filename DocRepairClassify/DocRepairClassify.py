@@ -25,18 +25,20 @@ def b_init(shape,name=None):
     return K.variable(values,name=name)
 
 convnet = Sequential()
-convnet.add(Conv2D(64,(5,5),activation='relu',input_shape=para.input_shape3,
-                   kernel_initializer=RandomNormal(0,1e-2),kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
+convnet.add(Conv2D(64,(5,5),activation='relu',input_shape=para.input_shape3, kernel_initializer=RandomNormal(0,1e-2)
+                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(MaxPooling2D())
-convnet.add(Conv2D(128,(3,3),activation='relu',
-                   kernel_initializer=RandomNormal(0,1e-2),kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
+#convnet.add(Conv2D(64,(2,2),strides=(2,2),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
+#                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
+convnet.add(Conv2D(128,(3,3),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
+                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(MaxPooling2D())
-convnet.add(Conv2D(256,(2,2),activation='relu',
-                   kernel_initializer=RandomNormal(0,1e-2),kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
+#convnet.add(Conv2D(256,(2,2),strides=(2,2),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
+#                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(Flatten())
-convnet.add(Dense(1024,activation="sigmoid",
-                   kernel_initializer=RandomNormal(0,1e-2),kernel_regularizer=l2(1e-3),bias_initializer=RandomNormal(0.5,1e-2)))
-convnet.add(Dense(para.n_class,activation='sigmoid',bias_initializer=b_init))
+convnet.add(Dense(1024,activation="sigmoid", kernel_initializer=RandomNormal(0,1e-2)
+                  ,kernel_regularizer=l2(1e-3),bias_initializer=RandomNormal(0.5,1e-2)))
+convnet.add(Dense(para.n_class,activation='softmax',bias_initializer=b_init))
 
 optimizer = Adam(0.00006)
 convnet.compile(loss="categorical_crossentropy",optimizer=optimizer, metrics=['accuracy'])
