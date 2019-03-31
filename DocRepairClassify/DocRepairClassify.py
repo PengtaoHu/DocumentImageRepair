@@ -34,7 +34,7 @@ convnet.add(MaxPooling2D())
 convnet.add(Conv2D(256,(2,2),activation='relu',
                    kernel_initializer=RandomNormal(0,1e-2),kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(Flatten())
-convnet.add(Dense(2048,activation="sigmoid",
+convnet.add(Dense(1024,activation="sigmoid",
                    kernel_initializer=RandomNormal(0,1e-2),kernel_regularizer=l2(1e-3),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(Dense(para.n_class,activation='sigmoid',bias_initializer=b_init))
 
