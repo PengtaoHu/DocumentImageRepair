@@ -5,9 +5,9 @@ n_class=96
 
 input_shape=(40,19)
 input_shape3=(40,19,1)
-#patience=10
+patience=20
 batch_size=16
 
-epochs=30
+epochs=20
 validation_steps=400
 steps_per_epoch=1600
