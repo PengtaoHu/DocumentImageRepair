@@ -1,0 +1,13 @@
+data_result_path='../../DataResult'
+patch_size=(40,19)
+
+n_class=96
+
+input_shape=(40,19)
+input_shape3=(40,19,1)
+#patience=10
+batch_size=16
+
+epochs=30
+validation_steps=400
+steps_per_epoch=1600
