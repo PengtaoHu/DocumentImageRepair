@@ -53,9 +53,9 @@ convnet.add(Dense(para.n_class,activation='softmax',bias_initializer=RandomNorma
 optimizer = Adam(0.00006)
 
 def top_accuracy(y_true, y_pred):
-    return top_k_categorical_accuracy(y_true, y_pred, k=3)
+    return keras.metrics.top_k_categorical_accuracy(y_true, y_pred, k=3)
 
-convnet.compile(loss="categorical_crossentropy",optimizer=optimizer, metrics=['accuracy','top_accuracy'])
+convnet.compile(loss="categorical_crossentropy",optimizer=optimizer, metrics=['accuracy'])
 
 convnet.summary()
 callback_list = []

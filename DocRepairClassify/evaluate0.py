@@ -36,7 +36,7 @@ fold_name='hard'
 
 get_custom_objects().update({'W_init': Winit,'b_init': binit})
 
-model_name='checkpoint_classify_largeshift'
+model_name='checkpoint'
 net = models.load_model(para.data_result_path+'/models/'+model_name+'.h5')
 '''
 train_generator = generator.ValidationDataGenerator()
