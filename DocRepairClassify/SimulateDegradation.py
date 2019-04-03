@@ -3,6 +3,7 @@ from random import random,randint
 import numpy as np
 import scipy.misc
 import math
+import para
 
 def gauss2D(shape=(3,3),sigma=0.5):
     m,n = [(ss-1.)/2. for ss in shape]
@@ -15,35 +16,34 @@ def gauss2D(shape=(3,3),sigma=0.5):
     return h
 
 def gaussDrop(im0,drop_rate=0.1,filter_size=(7,7),sigma=1):
-    output=np.zeros((40,19),dtype=np.uint8)
+    output=np.zeros(para.patch_size,dtype=np.uint8)
     filter=gauss2D(filter_size,sigma)
     verti_margin=math.floor(filter_size[0]/2)
     hori_margin=math.floor(filter_size[1]/2)
-    filter=filter/filter[verti_margin][hori_margin]*1.5
-    #print(filter)
-    for i in range(40):
-        for j in range(19):
+    filter=filter/filter[verti_margin][hori_margin]
+    for i in range(para.patch_size[0]):
+        for j in range(para.patch_size[1]):
             output[i][j]=im0[i][j]
-    for i in range(40):
-        for j in range(19):
+    for i in range(para.patch_size[0]):
+        for j in range(para.patch_size[1]):
             if random()<drop_rate:
                 for u in range(filter.shape[0]):
                     for v in range(filter.shape[1]):
                         hori=u-verti_margin
                         verti=v-hori_margin
-                        if i+u>=0 and i+u<40 and j+v>=0 and j+v<19:
+                        if i+u>=0 and i+u<para.patch_size[0] and j+v>=0 and j+v<para.patch_size[1]:
                             if random()<filter[u][v]:
-                                output[i+u][j+v]=min(255,im0[i+u][j+v]+255*filter[u][v])
+                                output[i+u][j+v]=max(output[i+u][j+v],min(255,im0[i+u][j+v]+255*filter[u][v]))
     return output
 
-def Dilation(im0):
-    output=np.zeros((40,19),dtype=np.uint8)
-    for i in range(40):
-        for j in range(19):
+def Dilation(im0,rate=1):
+    output=np.zeros(para.patch_size,dtype=np.uint8)
+    for i in range(para.patch_size[0]):
+        for j in range(para.patch_size[1]):
             output[i][j]=im0[i][j]
-    for i in range(40):
-        for j in range(19):
-            if im0[i][j]<255:
+    for i in range(para.patch_size[0]):
+        for j in range(para.patch_size[1]):
+            if random()<rate and im0[i][j]<255:
                 if i-1>0:
                     output[i-1][j]=min(output[i-1][j],im0[i][j])
                 if i+1<40:
@@ -55,26 +55,40 @@ def Dilation(im0):
     return output
 
 def Shift(im0,x,y):
-    output=np.zeros((40,19),dtype=np.uint8)+255
-    for i in range(40):
-        for j in range(19):
-            if i+x>=0 and i+x<40 and j+y>=0 and j+y<19:
+    output=np.zeros(para.patch_size,dtype=np.uint8)+255
+    for i in range(para.patch_size[0]):
+        for j in range(para.patch_size[1]):
+            if i+x>=0 and i+x<para.patch_size[0] and j+y>=0 and j+y<para.patch_size[1]:
                 output[i+x][j+y]=im0[i][j]
     return output
 
 def Degrade(im0):#may not degrade
     output=im0
+
+    dilation_rate=0
     for i in range(randint(0,2)):
-        output=Dilation(output)
-    if randint(0,5)>0:
-        output=gaussDrop(output)
-    output=Shift(output,randint(-3,3),randint(-3,3))
+        if randint(0,5)==0:
+            output=Dilation(output)
+            dilation_rate+=1
+        else:
+            k=0.3+0.7*random()
+            output=Dilation(output,k)
+            dilation_rate+=k
+
+    if(randint(0,5)>0):
+        output=gaussDrop(output,drop_rate=0.5*random()+0.1)
+    #output=uniformDrop(output)
+
+    shift_rate_hori=randint(-7,7)
+    shift_rate_verti=randint(-4,4)
+    output=Shift(output,shift_rate_hori,shift_rate_verti)
+
     return output
-'''
+
 im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy\e.png')
 im0 = np.array(im0)
-for i in range(100):
+for i in range(200):
     output=Degrade(im0)
     img = Image.fromarray(output, 'L')
     img.save(para.data_result_path+'/simulate/simulate'+str(i)+'.png')
-'''
+

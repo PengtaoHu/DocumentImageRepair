@@ -31,12 +31,12 @@ class binit:
     def __call__(self, shape, name=None):
         return b_init(shape, name=name)
 
-img_name='labschoolreport-0003b-135.tiff'
-fold_name='easy'
+img_name='labschoolreport-0002-012-8.tiff'
+fold_name='hard'
 
 get_custom_objects().update({'W_init': Winit,'b_init': binit})
 
-model_name='checkpoint'
+model_name='checkpoint_classify_largeshift'
 net = models.load_model(para.data_result_path+'/models/'+model_name+'.h5')
 '''
 train_generator = generator.ValidationDataGenerator()
@@ -60,9 +60,11 @@ with open(os.path.join(para.data_result_path+'/data/test\lines','lines_'+img_nam
     reader = csv.reader(linefile, delimiter=',', quotechar='|')
     for row in reader:
         lines.append([int((row[0].split())[0]),int((row[0].split())[1])])
-output=np.zeros((len(lines)*40*3,doc_img.shape[1]),dtype=np.uint8)
+
+multi=4
+output=np.zeros((len(lines)*40*multi,doc_img.shape[1]),dtype=np.uint8)
 for idx,line in enumerate(lines):
-    output[idx*40*3:idx*40*3+40,:]=doc_img[line[0]:line[1]+1,:]
+    output[idx*40*multi:idx*40*multi+40,:]=doc_img[line[0]:line[1]+1,:]
 
 chars=[]
 with open(os.path.join(para.data_result_path+'/data/test\chars','chars_'+img_name+'.txt'), newline='') as linefile:
@@ -86,18 +88,20 @@ for char in chars:
     im2 = np.expand_dims(im2,0)
     ims2= np.stack((im2,)*healthy_patches.shape[0], axis=0)
     y_pred0=(net.predict_on_batch(im2))[0]
-    y_pred0=y_pred0/y_pred0.sum()
-    max_pred=np.argmax(y_pred0)
+    max_pred=np.argsort(-y_pred0)[:multi-1]
     
     img=Image.fromarray(im20,'L')
     img.save(para.data_result_path+'/evaluate_results/'+str(line_count+1)+'_'+str(col_count+1)+'.png')
+
     f = open(para.data_result_path+'/evaluate_results/'+str(line_count+1)+'_'+str(col_count+1)+'.txt', 'w')
-    f.write(str(y_pred0[max_pred])+' '+str(healthy_labels[max_pred])+'\r\n')
+    for i in max_pred:
+        f.write(str(y_pred0[i])+' '+str(healthy_labels[i])+'\r\n')
     for i in range(len(y_pred0)):
         f.write(str(y_pred0[i])+' '+str(healthy_labels[i])+'\r\n')
     f.close()
     
-    output[line_count*40*3+40:line_count*40*3+80,char[0]:char[1]+1]=healthy_patches0[max_pred]
+    for idx,value in enumerate(max_pred):
+        output[line_count*40*multi+40*(idx+1):line_count*40*multi+40*(idx+2),char[0]:char[1]+1]=healthy_patches0[value]
     col_count+=1
 
 img = Image.fromarray(output, 'L')
