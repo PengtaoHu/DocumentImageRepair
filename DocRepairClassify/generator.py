@@ -33,15 +33,16 @@ def ValidationDataGenerator(batch_size=para.batch_size,fold=0):
     npz_train = np.load(para.data_result_path+'/train.npz')
     train_labels=npz_train['labels']
     train_patches=npz_train['patches']
-    
+    idx1=0
     while True:
         labels = []
         ims = []
+        if idx1+batch_size-1>=train_labels.shape[0]:
+            idx1=0
         for i in range(batch_size):
-            idx1=randint(0,len(train_patches)-1)
-            #img=scipy.misc.imresize(healthy_patches[idx1],para.input_shape)
             img=np.expand_dims(train_patches[idx1],-1)
             label=(np.argwhere(healthy_labels==train_labels[idx1]))[0]
+            idx1+=1
             labels.append(label)
             ims.append(img)
         ims=np.array(ims)
