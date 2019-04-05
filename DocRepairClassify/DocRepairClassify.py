@@ -16,14 +16,6 @@ import keras
 import generator
 from keras.initializers import RandomNormal
 
-def W_init(shape,name=None):
-    values = rng.normal(loc=0,scale=1e-2,size=shape)
-    return K.variable(values,name=name)
-
-def b_init(shape,name=None):
-    values=rng.normal(loc=0.5,scale=1e-2,size=shape)
-    return K.variable(values,name=name)
-
 convnet = Sequential()
 convnet.add(Conv2D(64,(5,5),activation='relu',input_shape=para.input_shape3, kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
@@ -55,7 +47,7 @@ optimizer = Adam(0.00006)
 def top_accuracy(y_true, y_pred):
     return keras.metrics.top_k_categorical_accuracy(y_true, y_pred, k=3)
 
-convnet.compile(loss="categorical_crossentropy",optimizer=optimizer, metrics=['accuracy'])
+convnet.compile(loss="categorical_crossentropy",optimizer=optimizer, metrics=['accuracy',top_accuracy])
 
 convnet.summary()
 callback_list = []
