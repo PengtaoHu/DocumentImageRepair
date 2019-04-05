@@ -74,7 +74,7 @@ def Degrade(im0):#may not degrade
             dilation_rate+=k
 
     if(randint(0,5)>0):
-        output=gaussDrop(output,drop_rate=0.05+0.1*random())
+        output=gaussDrop(output,drop_rate=0.15*random())
 
     shift_rate_hori=randint(-7,7)
     shift_rate_verti=randint(-4,4)
@@ -82,11 +82,11 @@ def Degrade(im0):#may not degrade
 
     return output
 
-'''
-im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/a.png')
+
+im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')
 im0 = np.array(im0)
 for i in range(200):
     output=Degrade(im0)
     img = Image.fromarray(output, 'L')
     img.save(para.data_result_path+'/simulate/simulate'+str(i)+'.png')
-'''
+
