@@ -82,11 +82,11 @@ def Degrade(im0):#may not degrade
 
     return output
 
-
+'''
 im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')
 im0 = np.array(im0)
 for i in range(200):
     output=Degrade(im0)
     img = Image.fromarray(output, 'L')
     img.save(para.data_result_path+'/simulate/simulate'+str(i)+'.png')
-
+'''

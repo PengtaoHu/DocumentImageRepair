@@ -1,4 +1,4 @@
-from keras.layers import Input, Conv2D, Dense, Flatten,MaxPooling2D,SeparableConv2D
+from keras.layers import Input, Conv2D, Dense, Flatten,MaxPooling2D,SeparableConv2D,Dropout,SpatialDropout2D
 from keras.models import Model, Sequential
 from keras.regularizers import l2
 from keras import backend as K
@@ -17,28 +17,30 @@ import generator
 from keras.initializers import RandomNormal
 
 convnet = Sequential()
-convnet.add(Conv2D(64,(5,5),activation='relu',input_shape=para.input_shape3, kernel_initializer=RandomNormal(0,1e-2)
+convnet.add(Conv2D(32,(5,5),activation='relu',input_shape=para.input_shape3, kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 #convnet.add(SeparableConv2D(32,(5,5),depth_multiplier=64,activation='relu',input_shape=para.input_shape3, depthwise_initializer=RandomNormal(0,1e-2),pointwise_initializer=RandomNormal(0,1e-2)
 #                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(MaxPooling2D())
+convnet.add(SpatialDropout2D(0.1))
 
-convnet.add(Conv2D(128,(3,3),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
+convnet.add(Conv2D(64,(3,3),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 #convnet.add(SeparableConv2D(64,(3,3),depth_multiplier=4,activation='relu', depthwise_initializer=RandomNormal(0,1e-2),pointwise_initializer=RandomNormal(0,1e-2)
 #                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(MaxPooling2D())
+convnet.add(SpatialDropout2D(0.1))
 
-convnet.add(Conv2D(256,(2,2),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
+convnet.add(Conv2D(128,(2,2),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 #convnet.add(SeparableConv2D(256,(2,2),depth_multiplier=4,activation='relu', depthwise_initializer=RandomNormal(0,1e-2),pointwise_initializer=RandomNormal(0,1e-2)
 #                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
-
 convnet.add(Flatten())
-convnet.add(Dense(1024,activation="sigmoid", kernel_initializer=RandomNormal(0,1e-2)
+convnet.add(Dropout(0.5))
+convnet.add(Dense(512,activation="sigmoid", kernel_initializer=RandomNormal(0,1e-2)
                   ,kernel_regularizer=l2(1e-3),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(Dense(para.n_class,activation='softmax',bias_initializer=RandomNormal(0.5,1e-2)))
 
