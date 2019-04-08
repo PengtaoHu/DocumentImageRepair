@@ -22,6 +22,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DocRepairClassify.py" />
+    <Compile Include="evaluate.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="evaluate0.py">
       <SubType>Code</SubType>
     </Compile>
