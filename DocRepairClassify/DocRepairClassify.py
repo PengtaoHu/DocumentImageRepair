@@ -63,7 +63,7 @@ convnet.fit_generator(epochs=para.epochs,
                 steps_per_epoch=para.steps_per_epoch,
                 callbacks=callback_list)
 
-convnet.save(para.data_result_path+'/models_classify/'+str(0)+'.h5')
+convnet.save(para.data_result_path+'/models/'+str(0)+'.h5')
 
 
 
