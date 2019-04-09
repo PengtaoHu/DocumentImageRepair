@@ -21,11 +21,7 @@ from keras.utils.generic_utils import get_custom_objects
 def top_accuracy(y_true, y_pred):
     return keras.metrics.top_k_categorical_accuracy(y_true, y_pred, k=3)
 keras.metrics.top_accuracy=top_accuracy
-'''
-class TopAccuracy:
-    def __call__(self, y_true, y_pred):
-        return top_accuracy(y_true, y_pred)
-'''
+
 img_name='labschoolreport-0002-012-8.tiff'
 fold_name='hard'
 

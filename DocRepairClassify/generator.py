@@ -18,7 +18,6 @@ def DataGenerator(batch_size=para.batch_size,fold=0):
         ims = []
         for i in range(batch_size):
             idx1=randint(0,len(healthy_patches)-1)
-            #img=scipy.misc.imresize(healthy_patches[idx1],para.input_shape)
             img=np.expand_dims(Degrade(healthy_patches[idx1]),-1)
             labels.append(idx1)
             ims.append(img)

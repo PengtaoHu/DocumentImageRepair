@@ -19,24 +19,18 @@ from keras.initializers import RandomNormal
 convnet = Sequential()
 convnet.add(Conv2D(32,(5,5),activation='relu',input_shape=para.input_shape3, kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
-#convnet.add(SeparableConv2D(32,(5,5),depth_multiplier=64,activation='relu',input_shape=para.input_shape3, depthwise_initializer=RandomNormal(0,1e-2),pointwise_initializer=RandomNormal(0,1e-2)
-#                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(MaxPooling2D())
 convnet.add(SpatialDropout2D(0.1))
 
 convnet.add(Conv2D(64,(3,3),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
-#convnet.add(SeparableConv2D(64,(3,3),depth_multiplier=4,activation='relu', depthwise_initializer=RandomNormal(0,1e-2),pointwise_initializer=RandomNormal(0,1e-2)
-#                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(MaxPooling2D())
 convnet.add(SpatialDropout2D(0.1))
 
 convnet.add(Conv2D(128,(2,2),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
-#convnet.add(SeparableConv2D(256,(2,2),depth_multiplier=4,activation='relu', depthwise_initializer=RandomNormal(0,1e-2),pointwise_initializer=RandomNormal(0,1e-2)
-#                   ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(Flatten())
 convnet.add(Dropout(0.5))
