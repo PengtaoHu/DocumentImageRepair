@@ -25,7 +25,7 @@ fold_name='hard'
 
 #get_custom_objects().update({'top_accuracy': TopAccuracy})
 
-model_name='checkpoint'
+model_name='checkpoint_reduced_units'
 net = models.load_model(para.data_result_path+'/models/'+model_name+'.h5')
 
 doc_img = Image.open(os.path.join(para.data_result_path+'/data/test',fold_name,img_name))

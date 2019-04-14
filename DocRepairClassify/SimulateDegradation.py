@@ -52,12 +52,12 @@ def Dilation(im0,rate=1):
                     output[i][j+1]=min(output[i][j+1],im0[i][j])
     return output
 
-def Shift(im0,x,y):
+def Shift(im0,y_shift,x_shift):
     output=np.zeros(para.patch_size,dtype=np.uint8)+255
     for i in range(40):
         for j in range(19):
-            if i+x>=0 and i+x<40 and j+y>=0 and j+y<19:
-                output[i+x][j+y]=im0[i][j]
+            if i+y_shift>=0 and i+y_shift<40 and j+x_shift>=0 and j+x_shift<19:
+                output[i+y_shift][j+x_shift]=im0[i][j]
     return output
 
 def Degrade(im0):#may not degrade
@@ -76,11 +76,11 @@ def Degrade(im0):#may not degrade
     if(randint(0,5)>0):
         output=gaussDrop(output,drop_rate=0.15*random())
 
-    shift_rate_hori=randint(-7,7)
-    shift_rate_verti=randint(-4,4)
-    output=Shift(output,shift_rate_hori,shift_rate_verti)
+    y_shift=randint(-7,7)
+    x_shift=randint(-4,4)
+    output=Shift(output,y_shift,x_shift)
 
-    return output
+    return output,y_shift,x_shift
 
 if __name__ == '__main__':
     im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')

@@ -28,6 +28,9 @@
     <Compile Include="evaluate0.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="evaluate_diff.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="generator.py">
       <SubType>Code</SubType>
     </Compile>
@@ -38,6 +41,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Verify.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
