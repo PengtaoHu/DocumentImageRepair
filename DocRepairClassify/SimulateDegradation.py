@@ -60,7 +60,7 @@ def Shift(im0,y_shift,x_shift):
                 output[i+y_shift][j+x_shift]=im0[i][j]
     return output
 
-def Degrade(im0):#may not degrade
+def Degrade(im0,y_shift=None,x_shift=None):#may not degrade
     output=im0
 
     dilation_rate=0
@@ -76,11 +76,21 @@ def Degrade(im0):#may not degrade
     if(randint(0,5)>0):
         output=gaussDrop(output,drop_rate=0.15*random())
 
-    y_shift=randint(-7,7)
-    x_shift=randint(-4,4)
+    if y_shift is None:
+        y_shift=randint(-7,7)
+    if x_shift is None:
+        x_shift=randint(-4,4)
     output=Shift(output,y_shift,x_shift)
 
     return output,y_shift,x_shift
+
+def HalfHalfPatch(im0,im1):
+    output=np.zeros((para.patch_size[0],para.patch_size[1]*2),dtype=np.uint8)+255
+    output[:,0:para.patch_size[1]]=Degrade(im0,x_shift=0)
+    right=Degrade(im1,x_shift=0)
+    offset=randint(-1,7)
+    output[:,para.patch_size[1]-offset:para.patch_size[1]*2-offset]=np.minimum(output[:,para.patch_size[1]-offset:para.patch_size[1]*2-offset],Degrade(im0,x_shift=0))
+    return 
 
 if __name__ == '__main__':
     im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')
