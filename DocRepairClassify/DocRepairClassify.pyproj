@@ -31,6 +31,12 @@
     <Compile Include="evaluate_diff.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="evaluate_fuse.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="evaluate_vote.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="generator.py">
       <SubType>Code</SubType>
     </Compile>

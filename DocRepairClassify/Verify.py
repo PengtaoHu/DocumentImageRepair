@@ -5,9 +5,11 @@ import Image
 import numpy as np
 import cv2 as cv
 
-def DiffScore(im0, im1,d_max=5):#TODO: deal with space
+def DiffScore(im0, im1,d_max=3):#TODO: deal with space
     score=0
     count=0
+    #np.pad(im0,(d_max,d_max),'constant',constant_values=(0, 0))
+    #np.pad(im1,(d_max,d_max),'constant',constant_values=(0, 0))
     for i in range(40):
         for j in range(19):
             if im0[i][j]!=0:
@@ -32,10 +34,20 @@ def DiffScore(im0, im1,d_max=5):#TODO: deal with space
         return d_max
     return score/count
 
-def SearchAlign(im0,im1,x_limit=4,y_limit=7):
+def SearchAlign(im0,im1,x_limit=4,y_limit=4):
     th0, im0 = cv.threshold(im0,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
     th1, im1 = cv.threshold(im1,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
     score_min=float('inf')
+    for i in range(-x_limit,x_limit+1):
+        for j in range(-y_limit,y_limit+1):
+            score=(DiffScore(im0, Shift(im1, j,i))
+                   +DiffScore(Shift(im1, j,i),im0))/2
+            if score<score_min:
+                score_min=score
+                x_shift=i
+                y_shift=j
+
+    '''
     for i in range(-x_limit,x_limit+1):
         score=(DiffScore(im0, Shift(im1, 0,i))+DiffScore(Shift(im1, 0,i),im0))/2
         if score<score_min:
@@ -47,6 +59,7 @@ def SearchAlign(im0,im1,x_limit=4,y_limit=7):
         if score<score_min:
             score_min=score
             y_shift=i
+    '''
     return (score_min,y_shift,x_shift)
 
 def main():
