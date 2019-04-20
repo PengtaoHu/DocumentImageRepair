@@ -8,7 +8,7 @@ from keras.preprocessing import image
 import Image
 import csv
 import scipy.misc
-from SimulateDegradation import Degrade
+from SimulateDegradation import *
 def DataGenerator(batch_size=para.batch_size,fold=0):
     npz_healthy = np.load(para.data_result_path+'/healthy.npz')
     healthy_labels=npz_healthy['labels']
@@ -18,8 +18,11 @@ def DataGenerator(batch_size=para.batch_size,fold=0):
         ims = []
         for i in range(batch_size):
             idx1=randint(0,len(healthy_patches)-1)
-            img=np.expand_dims(Degrade(healthy_patches[idx1]),-1)
-            labels.append(idx1)
+            idx2=randint(0,len(healthy_patches)-1)
+            idx3=randint(0,len(healthy_patches)-1)
+            img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3])[0]
+            img=np.expand_dims(img,-1)
+            labels.append(idx2)
             ims.append(img)
         ims=np.array(ims)
         labels=keras.utils.to_categorical(labels,para.n_class)
@@ -46,5 +49,32 @@ def ValidationDataGenerator(batch_size=para.batch_size,fold=0):
             ims.append(img)
         ims=np.array(ims)
         labels=keras.utils.to_categorical(labels,para.n_class)
+        labels=np.array(labels)
+        yield ims, labels
+
+
+def RoIGenerator(batch_size=para.batch_size,fold=0):
+    npz_healthy = np.load(para.data_result_path+'/healthy.npz')
+    healthy_labels=npz_healthy['labels']
+    healthy_patches=npz_healthy['patches']
+    while True:
+        labels = []
+        ims = []
+        for i in range(batch_size):
+            label=randint(0,1)
+            idx1=randint(0,len(healthy_patches)-1)
+            idx2=randint(0,len(healthy_patches)-1)
+            idx3=randint(0,len(healthy_patches)-1)
+            if label==1:
+                if healthy_labels[idx2]=='space':
+                    label=0
+                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3])[0]
+            else:
+                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],randint(1,9))[0]
+            img=np.expand_dims(img,-1)
+            labels.append(label)
+            ims.append(img)
+        ims=np.array(ims)
+        labels=keras.utils.to_categorical(labels,2)
         labels=np.array(labels)
         yield ims, labels

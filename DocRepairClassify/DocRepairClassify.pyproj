@@ -31,6 +31,9 @@
     <Compile Include="evaluate_diff.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="evaluate_RoI.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="evaluate_vote.py">
       <SubType>Code</SubType>
     </Compile>
@@ -38,6 +41,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="para.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RoI.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimulateDegradation.py">

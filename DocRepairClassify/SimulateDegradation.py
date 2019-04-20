@@ -84,19 +84,22 @@ def Degrade(im0,y_shift=None,x_shift=None):#may not degrade
 
     return output,y_shift,x_shift
 
-def HalfHalfPatch(im0,im1):
-    output=np.zeros((para.patch_size[0],para.patch_size[1]*2),dtype=np.uint8)+255
-    output[:,0:para.patch_size[1]]=Degrade(im0,x_shift=0)
-    right=Degrade(im1,x_shift=0)
-    offset=randint(-1,7)
-    output[:,para.patch_size[1]-offset:para.patch_size[1]*2-offset]=np.minimum(output[:,para.patch_size[1]-offset:para.patch_size[1]*2-offset],Degrade(im0,x_shift=0))
-    return 
+def HalfHalfPatch(im_left,im_main,im_right,shift_from_center=0):
+    output=np.zeros((para.patch_size[0],para.patch_size[1]*3),dtype=np.uint8)+255
+    output[:,para.patch_size[1]:para.patch_size[1]*2]=im_main
+    offset_left=randint(0,6)
+    offset_right=randint(0,6)
+    output[:,para.patch_size[1]*2-offset_right:para.patch_size[1]*3-offset_right]=np.minimum(output[:,para.patch_size[1]*2-offset_right:para.patch_size[1]*3-offset_right],im_right)
+    output[:,offset_left:para.patch_size[1]+offset_left]=np.minimum(output[:,offset_left:para.patch_size[1]+offset_left],im_left)
+    output=output[:,para.patch_size[1]+shift_from_center:para.patch_size[1]*2+shift_from_center]
+    output=Degrade(output,x_shift=0)
+    return output
 
 if __name__ == '__main__':
     im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')
     im0 = np.array(im0)
     for i in range(200):
-        output=Degrade(im0)
+        output=HalfHalfPatch(im0,im0,im0)[0]
         img = Image.fromarray(output, 'L')
         img.save(para.data_result_path+'/simulate/simulate'+str(i)+'.png')
 
