@@ -17,15 +17,15 @@ def DataGenerator(batch_size=para.batch_size,fold=0):
         labels = []
         ims = []
         for i in range(batch_size):
-            '''
+            
             idx1=randint(0,len(healthy_patches)-1)
             idx2=randint(0,len(healthy_patches)-1)
             idx3=randint(0,len(healthy_patches)-1)
-            img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3])[0]
+            img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],randint(-3,3))[0]
             img=np.expand_dims(img,-1)
-            '''
-            idx2=randint(0,len(healthy_patches)-1)
-            img=np.expand_dims(Degrade(healthy_patches[idx2])[0],-1)
+            
+            #idx2=randint(0,len(healthy_patches)-1)
+            #img=np.expand_dims(Degrade(healthy_patches[idx2])[0],-1)
             
             labels.append(idx2)
             ims.append(img)

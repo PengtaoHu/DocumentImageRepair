@@ -87,8 +87,8 @@ def Degrade(im0,y_shift=None,x_shift=None):#may not degrade
 def HalfHalfPatch(im_left,im_main,im_right,shift_from_center=0):
     output=np.zeros((para.patch_size[0],para.patch_size[1]*3),dtype=np.uint8)+255
     output[:,para.patch_size[1]:para.patch_size[1]*2]=im_main
-    offset_left=randint(0,6)
-    offset_right=randint(0,6)
+    offset_left=randint(0,5)
+    offset_right=randint(0,5)
     output[:,para.patch_size[1]*2-offset_right:para.patch_size[1]*3-offset_right]=np.minimum(output[:,para.patch_size[1]*2-offset_right:para.patch_size[1]*3-offset_right],im_right)
     output[:,offset_left:para.patch_size[1]+offset_left]=np.minimum(output[:,offset_left:para.patch_size[1]+offset_left],im_left)
     output=output[:,para.patch_size[1]+shift_from_center:para.patch_size[1]*2+shift_from_center]
