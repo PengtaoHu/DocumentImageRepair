@@ -57,5 +57,5 @@ convnet.fit_generator(epochs=para.epochs,
                 generator=train_generator,
                 steps_per_epoch=para.steps_per_epoch,
                 validation_data=val_generator,
-                validation_steps=para.validation_steps,
+                validation_steps=400,
                 callbacks=callback_list)

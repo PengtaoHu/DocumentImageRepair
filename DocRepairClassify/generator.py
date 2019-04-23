@@ -24,9 +24,6 @@ def DataGenerator(batch_size=para.batch_size,fold=0):
             img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],randint(-3,3))[0]
             img=np.expand_dims(img,-1)
             
-            #idx2=randint(0,len(healthy_patches)-1)
-            #img=np.expand_dims(Degrade(healthy_patches[idx2])[0],-1)
-            
             labels.append(idx2)
             ims.append(img)
         ims=np.array(ims)
@@ -75,7 +72,36 @@ def RoIGenerator(batch_size=para.batch_size,fold=0):
                     label=0
                 img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3])[0]
             else:
-                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],randint(1,9))[0]
+                shift_from_center=randint(-9,9)
+                while shift_from_center==0:
+                    shift_from_center=randint(-9,9)
+                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],shift_from_center)[0]
+            img=np.expand_dims(img,-1)
+            labels.append(label)
+            ims.append(img)
+        ims=np.array(ims)
+        labels=keras.utils.to_categorical(labels,2)
+        labels=np.array(labels)
+        yield ims, labels
+
+def SegBarGenerator(batch_size=para.batch_size,fold=0):
+    npz_healthy = np.load(para.data_result_path+'/healthy.npz')
+    healthy_labels=npz_healthy['labels']
+    healthy_patches=npz_healthy['patches']
+    while True:
+        labels = []
+        ims = []
+        for i in range(batch_size):
+            label=randint(0,1)
+            idx1=randint(0,len(healthy_patches)-1)
+            idx2=randint(0,len(healthy_patches)-1)
+            if label==1:
+                img=SegBarPatch(healthy_patches[idx1],healthy_patches[idx2])[0]
+            else:
+                shift_from_center=randint(-19,19)
+                while abs(shift_from_center)<2:
+                    shift_from_center=randint(-19,19)
+                img=SegBarPatch(healthy_patches[idx1],healthy_patches[idx2],shift_from_center)[0]
             img=np.expand_dims(img,-1)
             labels.append(label)
             ims.append(img)

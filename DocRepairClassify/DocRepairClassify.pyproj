@@ -22,9 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DocRepairClassify.py" />
-    <Compile Include="evaluate.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="evaluate0.py">
       <SubType>Code</SubType>
     </Compile>
@@ -40,10 +37,16 @@
     <Compile Include="generator.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="iterate_repair.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="para.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RoI.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SegBar.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimulateDegradation.py">
