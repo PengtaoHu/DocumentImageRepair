@@ -13,7 +13,7 @@ model_path_RoI=para.data_result_path+'/models/checkpoint_RoI.h5'
 lineseg_path=os.path.join(para.data_result_path+'/data/test\lines','lines_'+img_name+'.txt')
 model_path_class=para.data_result_path+'/models/checkpoint_reduced_units.h5'
 n_iteration=6
-'''
+
 for i in range(n_iteration):
     print(i)
     output_path=para.data_result_path+'/iterate/'+str(i)+'.txt'
@@ -22,7 +22,7 @@ for i in range(n_iteration):
     output_path=para.data_result_path+'/iterate/'+str(i)+'.png'
     evaluate_vote(img_path,output_path,model_path_class,lineseg_path,charseg_path)
     img_path=output_path
-'''
+
 lines=[]
 with open(lineseg_path, newline='') as linefile:
     reader = csv.reader(linefile, delimiter=',', quotechar='|')

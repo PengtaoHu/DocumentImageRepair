@@ -95,16 +95,6 @@ def HalfHalfPatch(im_left,im_main,im_right,shift_from_center=0):
     output=Degrade(output,x_shift=0)
     return output
 
-def SegBarPatch(im_left,im_right,shift_from_center=0):
-    output=np.zeros((para.patch_size[0],para.patch_size[1]*2+3),dtype=np.uint8)+255
-    offset_left=randint(-1,2)
-    offset_right=randint(-1,2)
-    output[:,2+para.patch_size[1]-offset_right:2+para.patch_size[1]*2-offset_right]=im_right
-    output[:,1+offset_left:1+para.patch_size[1]+offset_left]=np.minimum(output[:,1+offset_left:1+para.patch_size[1]+offset_left],im_left)
-    output=output[:,para.patch_size[1]-9+shift_from_center:para.patch_size[1]+11+shift_from_center]
-    output=Degrade(output,x_shift=0)
-    return output
-
 if __name__ == '__main__':
     im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')
     im0 = np.array(im0)

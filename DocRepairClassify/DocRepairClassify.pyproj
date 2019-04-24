@@ -46,9 +46,6 @@
     <Compile Include="RoI.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SegBar.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SimulateDegradation.py">
       <SubType>Code</SubType>
     </Compile>
