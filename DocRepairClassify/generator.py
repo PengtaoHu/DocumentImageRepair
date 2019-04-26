@@ -70,12 +70,12 @@ def RoIGenerator(batch_size=para.batch_size,fold=0):
             if label==1:
                 if healthy_labels[idx2]=='space':
                     label=0
-                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3])[0]
+                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],view_size=para.patch_size[1]*2)[0]
             else:
                 shift_from_center=randint(-9,9)
                 while shift_from_center==0:
                     shift_from_center=randint(-9,9)
-                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],shift_from_center)[0]
+                img=HalfHalfPatch(healthy_patches[idx1],healthy_patches[idx2],healthy_patches[idx3],shift_from_center,view_size=para.patch_size[1]*2)[0]
             img=np.expand_dims(img,-1)
             labels.append(label)
             ims.append(img)
@@ -83,7 +83,7 @@ def RoIGenerator(batch_size=para.batch_size,fold=0):
         labels=keras.utils.to_categorical(labels,2)
         labels=np.array(labels)
         yield ims, labels
-
+'''
 def SegBarGenerator(batch_size=para.batch_size,fold=0):
     npz_healthy = np.load(para.data_result_path+'/healthy.npz')
     healthy_labels=npz_healthy['labels']
@@ -109,3 +109,4 @@ def SegBarGenerator(batch_size=para.batch_size,fold=0):
         labels=keras.utils.to_categorical(labels,2)
         labels=np.array(labels)
         yield ims, labels
+'''

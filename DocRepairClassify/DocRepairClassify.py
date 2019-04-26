@@ -21,19 +21,19 @@ convnet.add(Conv2D(32,(5,5),activation='relu',input_shape=para.input_shape3, ker
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(MaxPooling2D())
-convnet.add(SpatialDropout2D(0.1))
+convnet.add(SpatialDropout2D(0.12))
 
 convnet.add(Conv2D(64,(3,3),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(MaxPooling2D())
-convnet.add(SpatialDropout2D(0.1))
+convnet.add(SpatialDropout2D(0.12))
 
 convnet.add(Conv2D(128,(2,2),activation='relu', kernel_initializer=RandomNormal(0,1e-2)
                    ,kernel_regularizer=l2(2e-4),bias_initializer=RandomNormal(0.5,1e-2)))
 
 convnet.add(Flatten())
-convnet.add(Dropout(0.5))
+convnet.add(Dropout(0.6))
 convnet.add(Dense(512,activation="sigmoid", kernel_initializer=RandomNormal(0,1e-2)
                   ,kernel_regularizer=l2(1e-3),bias_initializer=RandomNormal(0.5,1e-2)))
 convnet.add(Dense(para.n_class,activation='softmax',bias_initializer=RandomNormal(0.5,1e-2)))

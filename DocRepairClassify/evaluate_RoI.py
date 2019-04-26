@@ -40,9 +40,9 @@ def evaluate_RoI(img_path,output_path,model_path,lineseg_path):
     f_char=open(output_path, 'w')
     for line_idx,line in enumerate(lines):
         predicts=[]
-        #f0 = open(para.data_result_path+'/RoI_results/line'+str(line_idx)+'.txt', 'w')
-        for i in range(doc_img.shape[1]-19):
-            im20 = doc_img[line[0]:line[1]+1,i:i+19]
+        f0 = open(para.data_result_path+'/RoI_results/line'+str(line_idx+1)+'.txt', 'w')
+        for i in range(doc_img.shape[1]-38):
+            im20 = doc_img[line[0]:line[1]+1,i:i+38]
             im2 = np.expand_dims(im20,-1)
             im2 = np.expand_dims(im2,0)
             y_pred0=(net.predict_on_batch(im2))[0]
@@ -51,7 +51,7 @@ def evaluate_RoI(img_path,output_path,model_path,lineseg_path):
         predicts=predicts[:,1]
 
         for idx,value in enumerate(predicts):
-            output[line_idx*40*4+40:line_idx*40*4+40*2,idx+9]=255*value
+            output[line_idx*40*4+40:line_idx*40*4+40*2,idx+19]=255*value
 
         suppressed_predicts=np.zeros_like(predicts)
         d=3
@@ -60,48 +60,43 @@ def evaluate_RoI(img_path,output_path,model_path,lineseg_path):
             right=idx+d+1 if idx+d<=predicts.shape[0] else predicts.shape[0]
             if value==np.amax(predicts[left:right]):
                 suppressed_predicts[idx]=value
-        thres=0.25
+        #thres=0.25
+        thres=0.4
         centers=[]
         for idx,value in enumerate(suppressed_predicts):
             if value>thres:
-                #f0.write(str(value)+'\r\n')
-                centers.append(idx+9)
-                output[line_idx*40*4+40*2:line_idx*40*4+40*3,idx+9]=255*value
-    
-        centers_merged=[]
-        centers_merged.append(centers[0])
-        for idx in range(1,len(centers)-1):
-            if centers[idx]-centers_merged[-1]<=12 and centers[idx]-centers_merged[-1]<centers[idx+1]-centers[idx]:
+                f0.write(str(value)+'\r\n')
+                centers.append(idx+19)
+                output[line_idx*40*4+40*2:line_idx*40*4+40*3,idx+19]=255*value
+          
+        def merge(centers):
+            flag=0
+            centers_merged=[]
+            centers_merged.append(centers[0])
+            for idx in range(1,len(centers)-1):
+                if centers[idx]-centers_merged[-1]<=12 and centers[idx]-centers_merged[-1]<centers[idx+1]-centers[idx]:
+                    left=centers_merged.pop(-1)
+                    centers_merged.append(floor((centers[idx]+left)/2))
+                    flag=1
+                else:
+                    centers_merged.append(centers[idx])
+            centers_merged.append(centers[-1])
+            if centers_merged[-1]-centers_merged[-2]<=12:
+                right=centers_merged.pop(-1)
                 left=centers_merged.pop(-1)
-                centers_merged.append(floor((centers[idx]+left)/2))
-            else:
-                centers_merged.append(centers[idx])
-        centers_merged.append(centers[-1])
-        if centers_merged[-1]-centers_merged[-2]<=12:
-            right=centers_merged.pop(-1)
-            left=centers_merged.pop(-1)
-            centers_merged.append(floor((left+right)/2))
+                centers_merged.append(floor((left+right)/2))
+                flag=1
+            return centers_merged,flag
 
-        centers=centers_merged.copy()
-
-        centers_merged=[]
-        centers_merged.append(centers[0])
-        for idx in range(1,len(centers)-1):
-            if centers[idx]-centers_merged[-1]<=12 and centers[idx]-centers_merged[-1]<centers[idx+1]-centers[idx]:
-                left=centers_merged.pop(-1)
-                centers_merged.append(floor((centers[idx]+left)/2))
-            else:
-                centers_merged.append(centers[idx])
-        centers_merged.append(centers[-1])
-        if centers_merged[-1]-centers_merged[-2]<=12:
-            right=centers_merged.pop(-1)
-            left=centers_merged.pop(-1)
-            centers_merged.append(floor((left+right)/2))
+        flag=1
+        while flag==1:
+            centers_merged,flag=merge(centers)
+            centers=centers_merged.copy()
 
         for value in centers_merged:
             f_char.write(str(value-9)+' '+str(value+9)+' '+str(line[0])+' '+str(line[1])+'\r\n')
             output[line_idx*40*4+40*3:line_idx*40*4+40*4,value]=255
-        #f0.close()
+        f0.close()
     f_char.close()
     img = Image.fromarray(output, 'L')
     img.save(para.data_result_path+'/RoI_results/RoI.png')
