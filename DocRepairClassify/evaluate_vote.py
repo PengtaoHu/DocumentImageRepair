@@ -58,8 +58,9 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
     for idx,line in enumerate(lines):
         output[idx*40*3:idx*40*3+40,:]=np.stack((doc_img[line[0]:line[1]+1,:],)*3, axis=-1)
         output[idx*40*3+40:idx*40*3+40*2,:]=np.stack((doc_img[line[0]:line[1]+1,:],)*3, axis=-1)
+        output[idx*40*3+40*2:idx*40*3+40*3,:]=np.stack((doc_img[line[0]:line[1]+1,:],)*3, axis=-1)
 
-    output2=doc_img.copy()
+    output_fianl=doc_img.copy()
 
     chars=[]
     with open(charseg_path, newline='') as charfile:
@@ -74,6 +75,7 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
     healthy_patches0=npz_healthy['patches']
     healthy_patches=np.expand_dims(healthy_patches0,-1)
 
+    '''
     patch_range=np.zeros((healthy_patches.shape[0],2))
     for idx,patch in enumerate(healthy_patches):
         for col in range(patch.shape[1]):
@@ -84,7 +86,7 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
             if np.amin(patch[:,col])<255:
                 patch_range[idx][1]=col
                 break
-
+    '''
     healthy_patches_group=[]
     for im in healthy_patches0:
         group=[]
@@ -96,7 +98,7 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
     line_count=0
     col_count=0
     max_voters=3
-    for idx,char in enumerate(chars):
+    for char in chars:
         while lines[line_count][0]<char[2]:
             line_count+=1
             col_count=0
@@ -104,7 +106,6 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
 
         im2 = np.expand_dims(im20,-1)
         im2 = np.expand_dims(im2,0)
-        ims2= np.stack((im2,)*healthy_patches.shape[0], axis=0)
         y_pred0=(net.predict_on_batch(im2))[0]
         max_pred=np.argsort(-y_pred0)[:max_voters]
     
@@ -115,7 +116,7 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
 
         voters=[]
         for i in max_pred:
-            if y_pred0[i]>0.01:
+            if y_pred0[i]>0.01 and healthy_labels[i] != 'and':
                 score_min=float('inf')
                 for idx,im in enumerate(healthy_patches_group[i]):
                     align_result=SearchAlign(im20,im)
@@ -123,22 +124,29 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
                         result_min=align_result
                 voters.append((healthy_labels[i],y_pred0[i])+result_min+(idx,))
                 f.write(str(voters[-1])+'\r\n')
-    
+        voters=np.asarray(voters)
+
+        #x_shift_mean=np.mean(voters[:,4])
+        #fix_shift=math.round(x_shift_mean)
+        #if math.fabs(fix_shift)>0:
+
         repair_patch=np.copy(doc_img[char[2]:char[3]+1,char[0]:char[1]+1])
-        if len(voters)<2 or voters[0][2]<0.2:
-            if len(voters)>0 and (voters[0][1]>0.9 and voters[0][2]<1.5 or voters[0][1]>0.8 and voters[0][2]<0.4 or voters[0][2]<0.2):
+        if voters.shape[0]<=1:
+            if len(voters)>0 and (voters[0][1]>0.9 and voters[0][2]<1.5 or voters[0][1]>0.8 and voters[0][2]<0.4):
                 original_patch=healthy_patches0[np.argwhere(healthy_labels==voters[0][0])][0][0]
                 repair_patch=Shift(original_patch,voters[0][3],voters[0][4])
+        elif np.mean(voters[:,2]<0.2):
+            original_patch=healthy_patches0[np.argwhere(healthy_labels==voters[np.argmin(voters[:,2])][0])]
+            repair_patch=Shift(original_patch,voters[np.argmin(voters[:,2])][3],voters[np.argmin(voters[:,2])][4])
         else:
             voters_patches=[]
             for voter in voters:
                 original_patch=healthy_patches0[np.argwhere(healthy_labels==voter[0])][0][0]
                 voters_patches.append(Shift(original_patch,voter[3],voter[4]))
-
             for y in range(40):
                 for x in range(19):
                     flag=1
-                    for i in range(1,len(voters)):
+                    for i in range(1,voters.shape[0]):
                         if abs(int(voters_patches[i][y][x])-int(voters_patches[0][y][x]))>100:
                             flag=0
                             break
@@ -148,17 +156,19 @@ def evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path):
         img=Image.fromarray(repair_patch,'L')
         img.save(para.data_result_path+'/evaluate_results_voter/'+str(line_count+1)+'_'+str(col_count+1)+'_.png')
         repaired_patch=Repair(repair_patch,im20)
-        output2[char[2]:char[3]+1,char[0]:char[1]+1]=repair_patch
+        output_fianl[char[2]:char[3]+1,char[0]:char[1]+1]=repair_patch
         output[line_count*40*3+40*1:line_count*40*3+40*2,char[0]:char[1]+1]=np.stack((repair_patch,)*3, axis=-1)
         output[line_count*40*3+40*2:line_count*40*3+40*3,char[0]:char[1]+1]=repaired_patch
     
         col_count+=1
         f.close()
+        if col_count>0:
+            break
 
-    img=Image.fromarray(output2,'L')
+    img=Image.fromarray(output_fianl,'L')
     img.save(output_path)
     img = Image.fromarray(output, 'RGB')
-    img.save(para.data_result_path+'/repair_results/real_repaired.png')
+    img.save(para.data_result_path+'/repair_results/repair_visualization.png')
     K.clear_session()
 
 if __name__ == '__main__':
@@ -168,5 +178,5 @@ if __name__ == '__main__':
     model_path=para.data_result_path+'/models/checkpoint_reduced_units.h5'
     lineseg_path=os.path.join(para.data_result_path+'/data/test\lines','lines_'+img_name+'.txt')
     charseg_path=os.path.join(para.data_result_path+'/RoI_results',img_name+'.txt')
-    output_path=para.data_result_path+'/repair_results/real_repaired_.png'
+    output_path=para.data_result_path+'/repair_results/repair_output.png'
     evaluate_vote(img_path,output_path,model_path,lineseg_path,charseg_path)

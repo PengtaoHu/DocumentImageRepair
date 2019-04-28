@@ -17,7 +17,10 @@ from keras.callbacks import TensorBoard
 from keras.utils.generic_utils import get_custom_objects
 from math import floor
 
+
 def evaluate_RoI(img_path,output_path,model_path,lineseg_path):
+    #generate RoI results
+    #output: characters segmentation
     net = models.load_model(model_path)
     doc_img = Image.open(img_path)
     doc_img = np.array(doc_img)

@@ -65,8 +65,8 @@ def Dilation(im0,rate=1):
                     output[i][j+1]=min(output[i][j+1],im0[i][j])
     return output
 
-def Shift(im0,y_shift,x_shift):
-    output=np.zeros(im0.shape,dtype=np.uint8)+255
+def Shift(im0,y_shift,x_shift,background=255):
+    output=np.zeros(im0.shape,dtype=np.uint8)+background
     for i in range(im0.shape[0]):
         for j in range(im0.shape[1]):
             if i+y_shift>=0 and i+y_shift<im0.shape[0] and j+x_shift>=0 and j+x_shift<im0.shape[1]:
