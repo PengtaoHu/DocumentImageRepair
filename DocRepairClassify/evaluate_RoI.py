@@ -40,10 +40,10 @@ def evaluate_RoI(img_path,output_path,model_path,lineseg_path):
     healthy_patches0=npz_healthy['patches']
     healthy_patches=np.expand_dims(healthy_patches0,-1)
 
-    f_char=open(output_path, 'w')
+    f_char=open(output_path+'.txt', 'w')
     for line_idx,line in enumerate(lines):
         predicts=[]
-        f0 = open(para.data_result_path+'/RoI_results/line'+str(line_idx+1)+'.txt', 'w')
+        f0 = open(output_path+str(line_idx+1)+'.txt', 'w')
         for i in range(doc_img.shape[1]-38):
             im20 = doc_img[line[0]:line[1]+1,i:i+38]
             im2 = np.expand_dims(im20,-1)
@@ -102,15 +102,15 @@ def evaluate_RoI(img_path,output_path,model_path,lineseg_path):
         f0.close()
     f_char.close()
     img = Image.fromarray(output, 'L')
-    img.save(para.data_result_path+'/RoI_results/RoI.png')
+    img.save(output_path+'.png')
     K.clear_session()
     
 
 if __name__ == '__main__':
-    img_name='labschoolreport-0002-012-8.tiff'
+    img_name='labschoolreport-0002-033-4.tiff'
     fold_name='hard'
     img_path=os.path.join(para.data_result_path+'/data/test',fold_name,img_name)
     model_path=para.data_result_path+'/models/checkpoint_RoI.h5'
     lineseg_path=os.path.join(para.data_result_path+'/data/test\lines','lines_'+img_name+'.txt')
-    output_path=para.data_result_path+'/RoI_results/'+str(img_name)+'.txt'
+    output_path=para.data_result_path+'/RoI_results/'+str(img_name)
     evaluate_RoI(img_path,output_path,model_path,lineseg_path)

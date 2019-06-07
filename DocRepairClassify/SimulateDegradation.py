@@ -85,8 +85,14 @@ def Degrade(im0,y_shift=None,x_shift=None):#may not degrade
             output=Dilation(output,k)
             dilation_rate+=k
 
+    img = Image.fromarray(output, 'L')
+    img.save(para.data_result_path+'/simulate/00simulate.png')
+
     if(randint(0,5)>0):
         output=gaussDrop(output,drop_rate=0.15*random())
+
+    img = Image.fromarray(output, 'L')
+    img.save(para.data_result_path+'/simulate/01simulate.png')
 
     if y_shift is None:
         y_shift=randint(-7,7)
@@ -112,13 +118,15 @@ def HalfHalfPatch(im_left,im_main,im_right,shift_from_center=0,view_size=para.pa
     return output
 
 if __name__ == '__main__':
-    #im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/s.png')
+    #im0 = Image.open(para.data_result_path+'/data\healthy\patches_healthy/kk.png')
+    #im0 = np.array(im0)
+
     npz_healthy = np.load(para.data_result_path+'/healthy.npz')
     healthy_labels=npz_healthy['labels']
     healthy_patches=npz_healthy['patches']
-    for i in range(100):
-        #output=Degrade(healthy_patches[randint(0,95)])[0]
-        output=HalfHalfPatch(healthy_patches[randint(0,95)],healthy_patches[randint(0,95)],healthy_patches[randint(0,95)],view_size=para.patch_size[1]*2)[0]
+    for i in range(10):
+        output=Degrade(healthy_patches[randint(0,95)])[0]
+        #output=HalfHalfPatch(healthy_patches[randint(0,95)],healthy_patches[randint(0,95)],healthy_patches[randint(0,95)],view_size=para.patch_size[1]*2)[0]
         img = Image.fromarray(output, 'L')
         img.save(para.data_result_path+'/simulate/simulate'+str(i)+'.png')
 

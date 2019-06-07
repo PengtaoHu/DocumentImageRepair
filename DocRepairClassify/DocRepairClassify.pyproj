@@ -28,10 +28,16 @@
     <Compile Include="evaluate_vote.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="evaluate_vote_lan.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="generate_predictions.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="generator.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="module1.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="para.py">
